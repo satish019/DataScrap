@@ -1,0 +1,25 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+url = "https://uk.gov.in/university-state"
+response = requests.get(url)
+
+if response.status_code == 200:
+     soup = BeautifulSoup(response.text)
+
+     table = soup.find('table')
+     rows =  table.find_all('tr')
+
+with open('colleges.csv', mode='w', newline='', encoding='utf-8') as file:
+
+          writer = csv.writer(file)
+          header = [th.text.strip() for th in rows[0].find_all('th')]
+          writer.writerow(header)
+          for row in rows[1:]:
+          data = [td.text.strip() for td in row.find_all('th')]
+          writer.writerow(data)
+
+          print("Data scraped successfully into colleges.csv")
+          else:
+          print("Failed to scrape data into colleges.csv")
